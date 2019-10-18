@@ -1,3 +1,4 @@
+import 'package:farm_lab_mobile/screens/node_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 
@@ -18,12 +19,32 @@ class _NodeSummaryPageState extends State<NodeSummaryPage> {
           NodeSummary(
             name: "Node 1",
             status: Status.online,
-            onPressed: () {},
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => NodePage(
+                    pageName: "Node 1",
+                    temperature: 5,
+                  ),
+                ),
+              );
+            },
           ),
           NodeSummary(
             name: "Node 2",
             status: Status.offline,
-            onPressed: () {},
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => NodePage(
+                    pageName: "Node 2",
+                    temperature: 10,
+                  ),
+                ),
+              );
+            },
           ),
         ],
       ),
