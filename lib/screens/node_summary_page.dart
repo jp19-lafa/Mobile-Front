@@ -1,4 +1,6 @@
+import 'package:farm_lab_mobile/interfaces/i_node.dart';
 import 'package:farm_lab_mobile/screens/node_page.dart';
+import 'package:farm_lab_mobile/services/node.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 
@@ -8,51 +10,60 @@ class NodeSummaryPage extends StatefulWidget {
 }
 
 class _NodeSummaryPageState extends State<NodeSummaryPage> {
+  NodeHelper nodeModel = NodeHelper();
+  List<Widget> nodeList = [Text('LOADING...')];
+
+  Future<void> buildNode() async {
+    List<INode> nodeData = await nodeModel.getNodes();
+    nodeList.clear();
+    setState(() {
+      for (var node in nodeData) {
+        nodeList.add(
+          NodeSummary(
+            name: node.label,
+            status: node.status,
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => NodePage(
+                    node: node,
+                  ),
+                ),
+              );
+            },
+          ),
+        );
+      }
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    buildNode();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text('Dashboard'),
       ),
-      body: ListView(
-        children: <Widget>[
-          NodeSummary(
-            name: "Node 1",
-            status: Status.online,
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => NodePage(
-                    pageName: "Node 1",
-                    temperature: 5,
-                  ),
-                ),
-              );
-            },
-          ),
-          NodeSummary(
-            name: "Node 2",
-            status: Status.offline,
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => NodePage(
-                    pageName: "Node 2",
-                    temperature: 10,
-                  ),
-                ),
-              );
-            },
-          ),
-        ],
+      body: RefreshIndicator(
+        onRefresh: buildNode,
+        child: ListView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          children: <Widget>[
+            Column(
+              children: nodeList,
+            ),
+          ],
+        ),
       ),
     );
   }
 }
-
-enum Status { online, offline, unavailable }
 
 class NodeSummary extends StatelessWidget {
   const NodeSummary({
@@ -62,52 +73,28 @@ class NodeSummary extends StatelessWidget {
   });
 
   final String name;
-  final Status status;
+  final bool status;
   final Function onPressed;
 
   Icon getIcon() {
-    switch (status) {
-      case Status.online:
-        return Icon(
-          Icons.check_circle,
-          color: Colors.green,
-        );
-        break;
-      case Status.offline:
-        return Icon(
-          Icons.remove_circle,
-          color: Colors.red,
-        );
-        break;
-      case Status.unavailable:
-        return Icon(
-          Icons.block,
-          color: Colors.grey,
-        );
-        break;
-      default:
-        return Icon(
-          Icons.block,
-          color: Colors.grey,
-        );
-        break;
+    if (status) {
+      return Icon(
+        Icons.check_circle,
+        color: Colors.green,
+      );
+    } else {
+      return Icon(
+        Icons.remove_circle,
+        color: Colors.red,
+      );
     }
   }
 
   String getStatus() {
-    switch (status) {
-      case Status.online:
-        return "Online";
-        break;
-      case Status.offline:
-        return "Offline";
-        break;
-      case Status.unavailable:
-        return "Unavailable";
-        break;
-      default:
-        return "Unknown";
-        break;
+    if (status) {
+      return "Online";
+    } else {
+      return "Offline";
     }
   }
 
