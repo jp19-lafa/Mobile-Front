@@ -20,11 +20,11 @@ class _NodePageState extends State<NodePage> {
       ),
       body: Column(
         children: <Widget>[
-          Text('Air temp: ' + widget.node.sensors.airtemp[0].value.toString()),
-          Text('Air hum: ' + widget.node.sensors.airhumidity[0].value.toString()),
-          Text('Water temp: ' + widget.node.sensors.watertemp[0].value.toString()),
-          Text('Water ph: ' + widget.node.sensors.waterph[0].value.toString()),
-          Text('Light str: ' + widget.node.sensors.lightstr[0].value.toString()),
+          Text('Air temp: ' + widget.node.sensors.airtemp.value.toString()),
+          Text('Air hum: ' + widget.node.sensors.airhumidity.value.toString()),
+          Text('Water temp: ' + widget.node.sensors.watertemp.value.toString()),
+          Text('Water ph: ' + widget.node.sensors.waterph.value.toString()),
+          Text('Light str: ' + widget.node.sensors.lightstr.value.toString()),
         ],
       ),
     );
