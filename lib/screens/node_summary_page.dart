@@ -23,9 +23,7 @@ class _NodeSummaryPageState extends State<NodeSummaryPage> {
             name: nodeData.label,
             status: nodeData.status,
             onPressed: () async{
-              print('hier');
               INode node = await nodeHelper.getNode(nodeData.id);
-              print(node);
               Navigator.push(
                 context,
                 MaterialPageRoute(
@@ -107,10 +105,11 @@ class NodeSummary extends StatelessWidget {
       margin: EdgeInsets.all(10),
       decoration: BoxDecoration(
         color: Colors.white,
-        border: Border.all(color: Colors.black),
-        borderRadius: BorderRadius.all(Radius.circular(20)),
         boxShadow: [
-          BoxShadow(color: Colors.black, offset: Offset(1, 1), blurRadius: 5),
+          BoxShadow(
+            color: Colors.grey,
+            blurRadius: 2,
+          )
         ],
       ),
       child: FlatButton(
