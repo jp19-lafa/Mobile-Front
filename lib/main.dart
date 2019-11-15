@@ -1,3 +1,4 @@
+import 'package:farm_lab_mobile/screens/node_summary_page.dart';
 import 'package:flutter/material.dart';
 
 void main() => runApp(MyApp());
@@ -8,9 +9,9 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'FarmLab Mobile',
       theme: ThemeData(
-        primarySwatch: Colors.blue,
+        primaryColor: Color(0xFF4CAF50),
       ),
-      home: HomePage(),
+      home: NodeSummaryPage(),
     );
   }
 }
