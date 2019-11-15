@@ -1,4 +1,4 @@
-import 'package:farm_lab_mobile/interfaces/i_node.dart';
+import 'package:farm_lab_mobile/models/node.dart';
 import 'package:farm_lab_mobile/services/networking.dart';
 
 class NodeHelper {
@@ -11,13 +11,13 @@ class NodeHelper {
 
   Future<dynamic> getNodes() async{
     String nodeJson = await _networkHelper.getRequest("/nodes");
-    List<INode> nodeData = nodesFromJson(nodeJson);
+    List<Node> nodeData = nodesFromJson(nodeJson);
     return nodeData;
   }
 
   Future<dynamic> getNode(String id) async{
     String nodeJson = await _networkHelper.getRequest("/nodes/" + id);
-    INode nodeData = nodeFromJson(nodeJson);
+    Node nodeData = nodeFromJson(nodeJson);
     return nodeData;
   }
 }

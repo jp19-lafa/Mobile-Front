@@ -1,25 +1,25 @@
-class IData {
+class Data {
   double value;
-  List<IHistory> history;
+  List<History> history;
   DateTime timestamp;
 
-  IData({
+  Data({
     this.value,
     this.history,
     this.timestamp,
   });
 
-  static List<IHistory> _getHistory(Map<String, dynamic> json) {
+  static List<History> _getHistory(Map<String, dynamic> json) {
     try {
-      List<IHistory> x =
-          List<IHistory>.from(json["history"].map((x) => IHistory.fromJson(x)));
+      List<History> x =
+          List<History>.from(json["history"].map((x) => History.fromJson(x)));
       return x;
     } catch (e) {
       return [];
     }
   }
 
-  factory IData.fromJson(Map<String, dynamic> json) => IData(
+  factory Data.fromJson(Map<String, dynamic> json) => Data(
         value: json["value"].toDouble(),
         history: _getHistory(json),
         timestamp: DateTime.parse(json["timestamp"]),
@@ -32,16 +32,16 @@ class IData {
       };
 }
 
-class IHistory {
+class History {
   DateTime timestamp;
   double value;
 
-  IHistory({
+  History({
     this.timestamp,
     this.value,
   });
 
-  factory IHistory.fromJson(Map<String, dynamic> json) => IHistory(
+  factory History.fromJson(Map<String, dynamic> json) => History(
         timestamp: DateTime.parse(json["timestamp"]),
         value: json["value"],
       );

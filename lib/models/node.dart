@@ -1,32 +1,32 @@
 import 'dart:convert';
 
-import 'package:farm_lab_mobile/interfaces/i_node_actuators.dart';
-import 'package:farm_lab_mobile/interfaces/i_node_member.dart';
-import 'package:farm_lab_mobile/interfaces/i_node_sensors.dart';
+import 'package:farm_lab_mobile/models/node_actuators.dart';
+import 'package:farm_lab_mobile/models/node_member.dart';
+import 'package:farm_lab_mobile/models/node_sensors.dart';
 
-INode nodeFromJson(String str) => INode.fromJson(json.decode(str));
+Node nodeFromJson(String str) => Node.fromJson(json.decode(str));
 
-String nodeToJson(INode data) => json.encode(data.toJson());
+String nodeToJson(Node data) => json.encode(data.toJson());
 
-List<INode> nodesFromJson(String str) =>
-    List<INode>.from(json.decode(str).map((x) => INode.fromJson(x)));
+List<Node> nodesFromJson(String str) =>
+    List<Node>.from(json.decode(str).map((x) => Node.fromJson(x)));
 
-String nodesToJson(List<INode> data) =>
+String nodesToJson(List<Node> data) =>
     json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
 
-class INode {
-  ISensors sensors;
-  IActuators actuators;
+class Node {
+  Sensors sensors;
+  Actuators actuators;
   bool status;
   bool allowPublicStats;
-  List<IMember> members;
+  List<Member> members;
   List<dynamic> actions;
   String id;
   String label;
   String macAddress;
   DateTime liveSince;
 
-  INode({
+  Node({
     this.sensors,
     this.actuators,
     this.status,
@@ -39,13 +39,13 @@ class INode {
     this.liveSince,
   });
 
-  factory INode.fromJson(Map<String, dynamic> json) => INode(
-        sensors: ISensors.fromJson(json["sensors"]),
-        actuators: IActuators.fromJson(json["actuators"]),
+  factory Node.fromJson(Map<String, dynamic> json) => Node(
+        sensors: Sensors.fromJson(json["sensors"]),
+        actuators: Actuators.fromJson(json["actuators"]),
         status: json["status"],
         allowPublicStats: json["allowPublicStats"],
         members:
-            List<IMember>.from(json["members"].map((x) => IMember.fromJson(x))),
+            List<Member>.from(json["members"].map((x) => Member.fromJson(x))),
         actions: List<dynamic>.from(json["actions"].map((x) => x)),
         id: json["_id"],
         label: json["label"],

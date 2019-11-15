@@ -1,6 +1,6 @@
-import 'package:farm_lab_mobile/interfaces/i_node.dart';
+import 'package:farm_lab_mobile/models/node.dart';
 import 'package:farm_lab_mobile/screens/node_page.dart';
-import 'package:farm_lab_mobile/services/node_helper.dart';
+import 'package:farm_lab_mobile/services/globals.dart' as global;
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 
@@ -10,20 +10,19 @@ class NodeSummaryPage extends StatefulWidget {
 }
 
 class _NodeSummaryPageState extends State<NodeSummaryPage> {
-  NodeHelper nodeHelper = NodeHelper("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWRpZW5jZSI6ImF1ZDoqIiwiaXNzdWVyIjoiRmFybUxhYlRlYW0iLCJzdWIiOiI1ZGM0MjJkNTNiMWUyMjAwMTRhZDNhNmEiLCJpYXQiOjE1NzMxMzUxMTMsImV4cCI6MTU3MzIyMTUxM30.CQgJzp9smCY5HQZtZk0uzO4DBzkCFwxJpq-aNsfcEqc");
   List<Widget> nodeList = [Text('LOADING...')];
 
   Future<void> buildNode() async {
-    List<INode> nodesData = await nodeHelper.getNodes();
+    List<Node> nodesData = await global.nodeHelper.getNodes();
     nodeList.clear();
     setState(() {
-      for (INode nodeData in nodesData) {
+      for (Node nodeData in nodesData) {
         nodeList.add(
           NodeSummary(
             name: nodeData.label,
             status: nodeData.status,
             onPressed: () async{
-              INode node = await nodeHelper.getNode(nodeData.id);
+              Node node = await global.nodeHelper.getNode(nodeData.id);
               Navigator.push(
                 context,
                 MaterialPageRoute(

@@ -1,15 +1,15 @@
-class IMember {
+class Member {
   String id;
   String firstname;
   String lastname;
 
-  IMember({
+  Member({
     this.id,
     this.firstname,
     this.lastname,
   });
 
-  factory IMember.fromJson(Map<String, dynamic> json) => IMember(
+  factory Member.fromJson(Map<String, dynamic> json) => Member(
         id: json["_id"],
         firstname: json["firstname"],
         lastname: json["lastname"],
