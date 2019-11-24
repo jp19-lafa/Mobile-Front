@@ -1,6 +1,7 @@
 library farm_lab_mobile.globals;
-
+import 'package:farm_lab_mobile/services/networking.dart';
 import 'package:farm_lab_mobile/services/node_helper.dart';
 
-String token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWRpZW5jZSI6ImF1ZDoqIiwiaXNzdWVyIjoiRmFybUxhYlRlYW0iLCJzdWIiOiI1ZGM0MjJkNTNiMWUyMjAwMTRhZDNhNmEiLCJpYXQiOjE1NzM4MDY3NzcsImV4cCI6MTU3Mzg5MzE3N30.rUza2mRVvUfMIQFowjrOVTHFeTVhgtEAyL84tOPb8p0';
-NodeHelper nodeHelper = NodeHelper(token);
+String token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWRpZW5jZSI6ImF1ZDoqIiwiaXNzdWVyIjoiRmFybUxhYlRlYW0iLCJzdWIiOiI1ZGM0MjJkNTNiMWUyMjAwMTRhZDNhNmEiLCJpYXQiOjE1NzQ2MDM5MjksImV4cCI6MTU3NDY5MDMyOX0.bkpSao04nLkUWnnGEQ2r0I6dA9mSMd-r7bupEKrxUwg';
+NetworkHelper networkHelper = NetworkHelper(token);
+NodeHelper nodeHelper = NodeHelper(networkHelper);

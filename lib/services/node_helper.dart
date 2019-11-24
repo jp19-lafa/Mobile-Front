@@ -2,12 +2,8 @@ import 'package:farm_lab_mobile/models/node.dart';
 import 'package:farm_lab_mobile/services/networking.dart';
 
 class NodeHelper {
-  String token;
+  NodeHelper(this._networkHelper);
   NetworkHelper _networkHelper;
-  NodeHelper(String token){
-    this.token = token;
-    this._networkHelper = NetworkHelper(this.token);
-  }
 
   Future<dynamic> getNodes() async{
     String nodeJson = await _networkHelper.getRequest("/nodes");

@@ -1,4 +1,5 @@
 import 'package:farm_lab_mobile/models/node.dart';
+import 'package:farm_lab_mobile/screens/add_node_page.dart';
 import 'package:farm_lab_mobile/screens/node_page.dart';
 import 'package:farm_lab_mobile/services/globals.dart' as global;
 import 'package:flutter/material.dart';
@@ -21,7 +22,7 @@ class _NodeSummaryPageState extends State<NodeSummaryPage> {
           NodeSummary(
             name: nodeData.label,
             status: nodeData.status,
-            onPressed: () async{
+            onPressed: () async {
               Node node = await global.nodeHelper.getNode(nodeData.id);
               Navigator.push(
                 context,
@@ -60,6 +61,18 @@ class _NodeSummaryPageState extends State<NodeSummaryPage> {
             ),
           ],
         ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => AddNodePage(),
+            ),
+          );
+        },
+        child: Icon(Icons.add),
+        backgroundColor: Colors.green,
       ),
     );
   }
