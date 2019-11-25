@@ -1,5 +1,7 @@
+import 'package:farm_lab_mobile/screens/add_node_page/step1.dart';
+import 'package:farm_lab_mobile/screens/add_node_page/step2.dart';
 import 'package:flutter/material.dart';
-import 'package:open_settings/open_settings.dart';
+import 'package:flutter_blue/flutter_blue.dart';
 
 class AddNodePage extends StatefulWidget {
   @override
@@ -8,66 +10,64 @@ class AddNodePage extends StatefulWidget {
 
 class _AddNodePageState extends State<AddNodePage>
     with SingleTickerProviderStateMixin {
+  Widget page;
+  List<Widget> buttons;
   int activeStep = 0;
   int totalSteps = 3;
+  FlutterBlue _flutterBlue;
+  AddNodeStep1 addNodeStep1;
+  AddNodeStep2 addNodeStep2;
+  List<BluetoothDevice> bluetoothDevices = [];
 
-  List<Widget> loadPage(){
-    stepAction();
-    return getContent();
+  @override
+  void initState() {
+    super.initState();
+    _flutterBlue = FlutterBlue.instance;
+    addNodeStep1 = AddNodeStep1(_flutterBlue);
+    addNodeStep2 = AddNodeStep2(_flutterBlue);
+    buildBody();
+    buildButtons();
   }
 
-  List<Widget> getContent() {
-    switch (activeStep) {
-      case 0:
-        return [
-          Padding(
-            padding: const EdgeInsets.all(10.0),
-            child: Text(
-              'Open Bluetooth settings\n\nConnect to the FarmLab',
-              textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 20),
-            ),
-          ),
-          RaisedButton(
-            child: Text('Open Bluetooth settings'),
-            onPressed: () => OpenSettings.openBluetoothSetting(),
-          ),
-        ];
-      case 1:
-        return [
-          Text('1'),
-        ];
-      case 2:
-        return [
-          Text('2'),
-        ];
-      case 3:
-        return [
-          Text('3'),
-        ];
-      default:
-        return [Text('default')];
-    }
+  runTask(var nodeStep) {
+    nodeStep.task().then((skip) {
+      setState(() {});
+      if (skip is bool && skip) {
+        nextStep();
+      }
+    });
   }
 
-    stepAction() {
+  buildStep() {
+    buildBody();
+    buildButtons();
+  }
+
+  buildBody() {
     switch (activeStep) {
       case 0:
+        runTask(addNodeStep1);
+        page = addNodeStep1.build();
         break;
       case 1:
+        runTask(addNodeStep2);
+        page = addNodeStep2.buildBody();
         break;
       case 2:
+        page = Text('2');
         break;
       case 3:
+        page = Text('3');
         break;
       default:
+        page = Text('default');
         break;
     }
   }
 
-  List<Widget> getButtons() {
+  buildButtons({bool previous = true}) {
     List<Widget> list = [];
-    if (activeStep != 0) {
+    if (activeStep != 0 && previous) {
       list.add(
         RaisedButton(
           child: Text('Previous Step'),
@@ -98,40 +98,30 @@ class _AddNodePageState extends State<AddNodePage>
         ),
       );
     }
-    return list;
+    buttons = list;
   }
 
   nextStep() {
-    if (activeStep != totalSteps) {
-      setState(() {
-        activeStep++;
-      });
-    }
+    setState(() {
+      activeStep++;
+    });
   }
 
   previousStep() {
-    if (activeStep != 0) {
-      setState(() {
-        activeStep--;
-      });
-    }
-  }
-
-  @override
-  void initState() {
-    super.initState();
+    setState(() {
+      activeStep--;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
+    buildStep();
     return Scaffold(
       appBar: AppBar(
         title: Text('Add a Node'),
       ),
       body: Center(
-        child: Column(
-          children: loadPage(),
-        ),
+        child: page,
       ),
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
@@ -144,7 +134,7 @@ class _AddNodePageState extends State<AddNodePage>
         ),
         child: ButtonBar(
           alignment: MainAxisAlignment.spaceEvenly,
-          children: getButtons(),
+          children: buttons,
         ),
       ),
     );
