@@ -1,5 +1,8 @@
-import 'package:farm_lab_mobile/screens/add_node_page/step1.dart';
-import 'package:farm_lab_mobile/screens/add_node_page/step2.dart';
+import 'package:farm_lab_mobile/components/step_button.dart';
+import 'package:farm_lab_mobile/components/step_button_bar.dart';
+import 'package:farm_lab_mobile/screens/add_node_page/add_node_step1.dart';
+import 'package:farm_lab_mobile/screens/add_node_page/add_node_step2.dart';
+import 'package:farm_lab_mobile/services/step_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_blue/flutter_blue.dart';
 
@@ -11,132 +14,38 @@ class AddNodePage extends StatefulWidget {
 class _AddNodePageState extends State<AddNodePage>
     with SingleTickerProviderStateMixin {
   Widget page;
-  List<Widget> buttons;
+  List<StepButton> buttons = [];
   int activeStep = 0;
-  int totalSteps = 3;
   FlutterBlue _flutterBlue;
   AddNodeStep1 addNodeStep1;
   AddNodeStep2 addNodeStep2;
+  StepController stepController;
   List<BluetoothDevice> bluetoothDevices = [];
 
   @override
   void initState() {
     super.initState();
     _flutterBlue = FlutterBlue.instance;
-    addNodeStep1 = AddNodeStep1(_flutterBlue);
-    addNodeStep2 = AddNodeStep2(_flutterBlue);
-    buildBody();
-    buildButtons();
-  }
-
-  runTask(var nodeStep) {
-    nodeStep.task().then((skip) {
-      setState(() {});
-      if (skip is bool && skip) {
-        nextStep();
-      }
-    });
-  }
-
-  buildStep() {
-    buildBody();
-    buildButtons();
-  }
-
-  buildBody() {
-    switch (activeStep) {
-      case 0:
-        runTask(addNodeStep1);
-        page = addNodeStep1.build();
-        break;
-      case 1:
-        runTask(addNodeStep2);
-        page = addNodeStep2.buildBody();
-        break;
-      case 2:
-        page = Text('2');
-        break;
-      case 3:
-        page = Text('3');
-        break;
-      default:
-        page = Text('default');
-        break;
-    }
-  }
-
-  buildButtons({bool previous = true}) {
-    List<Widget> list = [];
-    if (activeStep != 0 && previous) {
-      list.add(
-        RaisedButton(
-          child: Text('Previous Step'),
-          onPressed: () => previousStep(),
-        ),
-      );
-    }
-    if (activeStep != totalSteps) {
-      list.add(
-        RaisedButton(
-          child: Text('Next Step'),
-          color: Colors.green,
-          textColor: Colors.white,
-          disabledColor: Colors.grey[200],
-          disabledTextColor: Colors.black,
-          onPressed: () => nextStep(),
-        ),
-      );
-    } else {
-      list.add(
-        RaisedButton(
-          child: Text('Finish'),
-          color: Colors.green,
-          textColor: Colors.white,
-          disabledColor: Colors.grey[200],
-          disabledTextColor: Colors.black,
-          onPressed: () => nextStep(),
-        ),
-      );
-    }
-    buttons = list;
-  }
-
-  nextStep() {
-    setState(() {
-      activeStep++;
-    });
-  }
-
-  previousStep() {
-    setState(() {
-      activeStep--;
-    });
+    stepController = StepController(setState);
+    addNodeStep1 = AddNodeStep1(_flutterBlue, stepController, setState);
+    addNodeStep2 = AddNodeStep2(_flutterBlue, stepController, setState);
+    stepController..addStep(addNodeStep1)..addStep(addNodeStep2);
   }
 
   @override
   Widget build(BuildContext context) {
-    buildStep();
+    stepController.runTask().then((_) {
+      print('buildtask');
+    });
     return Scaffold(
       appBar: AppBar(
         title: Text('Add a Node'),
       ),
       body: Center(
-        child: page,
+        child: stepController.buildBody(),
       ),
-      bottomNavigationBar: Container(
-        decoration: BoxDecoration(
-          border: BorderDirectional(
-            top: BorderSide(
-              color: Colors.grey[300],
-              width: 1,
-            ),
-          ),
-        ),
-        child: ButtonBar(
-          alignment: MainAxisAlignment.spaceEvenly,
-          children: buttons,
-        ),
-      ),
+      bottomNavigationBar:
+          StepButtonBar(buttons: stepController.buildButtons()),
     );
   }
 }

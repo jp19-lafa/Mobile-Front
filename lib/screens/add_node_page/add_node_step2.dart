@@ -1,33 +1,48 @@
+import 'dart:async';
+
+import 'package:farm_lab_mobile/components/step_button.dart';
+import 'package:farm_lab_mobile/screens/add_node_page/add_node_step.dart';
+import 'package:farm_lab_mobile/services/step_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_blue/flutter_blue.dart';
 
-class AddNodeStep2 {
-  AddNodeStep2(this._flutterBlue);
-  final FlutterBlue _flutterBlue;
+class AddNodeStep2 implements AddNodeStep {
+  AddNodeStep2(this._flutterBlue, this.stepController, this.setState);
+  FlutterBlue _flutterBlue;
+  StepController stepController;
+  Function setState;
   List<BluetoothDevice> nodeDevices;
   bool run = false;
   String _radioValue;
   String choice;
+  Function nextOnPressed;
 
   void radioButtonChanges(String value) {
-    _radioValue = value;
-    print(value);
+    setState(() {
+      _radioValue = value;
+      nextOnPressed = () => stepController.nextStep();
+    });
   }
 
-  Future<dynamic> task() {
+  Future<void> task() {
     if (!run) {
       run = true;
+      nextOnPressed = null;
+      _radioValue = null;
       return _flutterBlue.startScan(timeout: Duration(seconds: 5)).then(
         (scanList) {
           if (scanList is List<ScanResult>) {
             scanList.sort((a, b) => b.rssi.compareTo(a.rssi));
             nodeDevices = [];
             for (ScanResult scanResult in scanList) {
-              RegExp exp = RegExp(r"FarmLab#\d{4}");
+              print(scanResult.device.id.toString());
+              //RegExp exp = RegExp(r"FARMLAB-[a-z0-9]{11}");
+              RegExp exp = RegExp(r"LE-Bose QuietComfort \d{2} Se");
               if (exp.hasMatch(scanResult.device.name)) {
                 nodeDevices.add(scanResult.device);
               }
             }
+            setState(() {});
           }
         },
       );
@@ -36,7 +51,7 @@ class AddNodeStep2 {
     }
   }
 
-  Widget buildBody() {
+  Widget buildPage() {
     List<Widget> children = [];
     if (nodeDevices == null) {
       children.add(CircularProgressIndicator());
@@ -82,8 +97,10 @@ class AddNodeStep2 {
             RaisedButton(
               child: Text('Scan again'),
               onPressed: () {
-                run = false;
-                nodeDevices = null;
+                setState(() {
+                  run = false;
+                  nodeDevices = null;
+                });
               },
             ),
           ],
@@ -94,5 +111,19 @@ class AddNodeStep2 {
     return Column(
       children: children,
     );
+  }
+
+  List<StepButton> buildButtons() {
+    return [
+      StepButton(
+        text: 'Previous Step',
+        onPressed: () => stepController.previousStep(),
+        green: false,
+      ),
+      StepButton(
+        text: 'Next Step',
+        onPressed: nextOnPressed,
+      ),
+    ];
   }
 }
