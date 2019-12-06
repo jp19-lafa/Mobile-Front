@@ -27,8 +27,8 @@ class StepController {
     });
   }
 
-  Future<void> runTask() {
-    return steps[activeStep].task().then((_) {});
+  void runTask() {
+    return steps[activeStep].task();
   }
 
   Widget buildBody() {

@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 
 abstract class AddNodeStep{
   StepController stepController;
-  Future<dynamic> task();
+  void task();
   Widget buildPage();
   List<StepButton> buildButtons();
 }

@@ -4,7 +4,7 @@ import 'package:farm_lab_mobile/screens/add_node_page/add_node_step1.dart';
 import 'package:farm_lab_mobile/screens/add_node_page/add_node_step2.dart';
 import 'package:farm_lab_mobile/services/step_controller.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_blue/flutter_blue.dart';
+import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
 
 class AddNodePage extends StatefulWidget {
   @override
@@ -16,7 +16,7 @@ class _AddNodePageState extends State<AddNodePage>
   Widget page;
   List<StepButton> buttons = [];
   int activeStep = 0;
-  FlutterBlue _flutterBlue;
+  FlutterBluetoothSerial _bluetooth;
   AddNodeStep1 addNodeStep1;
   AddNodeStep2 addNodeStep2;
   StepController stepController;
@@ -25,18 +25,16 @@ class _AddNodePageState extends State<AddNodePage>
   @override
   void initState() {
     super.initState();
-    _flutterBlue = FlutterBlue.instance;
+    _bluetooth = FlutterBluetoothSerial.instance;
     stepController = StepController(setState);
-    addNodeStep1 = AddNodeStep1(_flutterBlue, stepController, setState);
-    addNodeStep2 = AddNodeStep2(_flutterBlue, stepController, setState);
+    addNodeStep1 = AddNodeStep1(_bluetooth, stepController, setState);
+    addNodeStep2 = AddNodeStep2(_bluetooth, stepController, setState);
     stepController..addStep(addNodeStep1)..addStep(addNodeStep2);
   }
 
   @override
   Widget build(BuildContext context) {
-    stepController.runTask().then((_) {
-      print('buildtask');
-    });
+    stepController.runTask();
     return Scaffold(
       appBar: AppBar(
         title: Text('Add a Node'),
@@ -49,3 +47,4 @@ class _AddNodePageState extends State<AddNodePage>
     );
   }
 }
+
