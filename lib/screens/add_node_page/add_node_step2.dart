@@ -22,11 +22,15 @@ class AddNodeStep2 implements AddNodeStep {
   void radioButtonChanges(String value) {
     setState(() {
       _radioValue = value;
-      nextOnPressed = () => stepController.nextStep();
+      print(value);
+      nextOnPressed = () {
+        deviceSearch.cancel();
+        stepController.nextStep(dataForNextStep: value);
+      };
     });
   }
 
-  Future<void> task() {
+  void task({var dataFromPreviousStep}) {
     if (run) {
       run = false;
       nextOnPressed = null;
@@ -48,12 +52,7 @@ class AddNodeStep2 implements AddNodeStep {
       deviceSearch.onDone(() {
         scanRunning = false;
         setState(() {});
-        //deviceSearch.cancel();
       });
-
-      return Future(() {});
-    } else {
-      return Future(() {});
     }
   }
 

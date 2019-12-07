@@ -10,12 +10,14 @@ class StepController {
   Widget page;
   StepButtonBar buttons;
   Function setState;
+  var dataForNextStep;
 
   void addStep(AddNodeStep step) {
     steps.add(step);
   }
 
-  void nextStep() {
+  void nextStep({var dataForNextStep}) {
+    this.dataForNextStep = dataForNextStep;
     setState(() {
       activeStep++;
     });
@@ -28,7 +30,7 @@ class StepController {
   }
 
   void runTask() {
-    return steps[activeStep].task();
+    return steps[activeStep].task(dataFromPreviousStep: dataForNextStep);
   }
 
   Widget buildBody() {

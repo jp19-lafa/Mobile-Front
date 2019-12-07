@@ -23,7 +23,7 @@ class AddNodeStep1 implements AddNodeStep {
   Function onPressed;
   Timer bluetoothChecker;
 
-  void task() {
+  void task({var dataFromPreviousStep}) {
     if (bluetoothChecker == null) {
       bluetoothChecker = Timer.periodic(
         Duration(milliseconds: 200),
