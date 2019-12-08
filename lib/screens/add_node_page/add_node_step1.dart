@@ -20,36 +20,35 @@ class AddNodeStep1 implements AddNodeStep {
   Function setState;
   bool _bluetoothOn = false;
   bool run = false;
-  Function onPressed;
-  Timer bluetoothChecker;
+
+  Function nextOnPressed() {
+    if (_bluetoothOn) {
+      return () {
+        stepController.nextStep();
+      };
+    } else {
+      return null;
+    }
+  }
 
   void task({var dataFromPreviousStep}) {
-    if (bluetoothChecker == null) {
-      bluetoothChecker = Timer.periodic(
-        Duration(milliseconds: 200),
-        (_) {
-          setState(() {});
-        },
-      );
-    }
-
     _bluetooth.state.then((state) {
       bool value = state.isEnabled;
       if (value && value != _bluetoothOn) {
         setState(() {
           _bluetoothOn = true;
-          onPressed = () {
-            bluetoothChecker.cancel();
-            bluetoothChecker = null;
-            stepController.nextStep();
-          };
         });
       } else if (!value && value != _bluetoothOn) {
         setState(() {
           _bluetoothOn = false;
-          onPressed = null;
         });
       }
+    });
+
+    _bluetooth.onStateChanged().listen((BluetoothState state) {
+      setState(() {
+        _bluetoothOn = state.isEnabled;
+      });
     });
   }
 
@@ -71,6 +70,21 @@ class AddNodeStep1 implements AddNodeStep {
         ),
       );
       children.add(
+        Expanded(
+          child: SwitchListTile(
+            title: const Text('Enable Bluetooth'),
+            value: _bluetoothOn,
+            onChanged: (bool value) {
+              if (value) {
+                _bluetooth.requestEnable().then((_) => setState(() {}));
+              } else {
+                _bluetooth.requestDisable().then((_) => setState(() {}));
+              }
+            },
+          ),
+        ),
+      );
+      children.add(
         RaisedButton(
           child: Text('Open Bluetooth settings'),
           onPressed: () => OpenSettings.openBluetoothSetting(),
@@ -86,7 +100,7 @@ class AddNodeStep1 implements AddNodeStep {
     return [
       StepButton(
         text: 'Next Step',
-        onPressed: onPressed,
+        onPressed: nextOnPressed(),
       ),
     ];
   }

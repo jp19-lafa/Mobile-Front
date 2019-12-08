@@ -16,27 +16,33 @@ class AddNodeStep2 implements AddNodeStep {
   bool scanRunning = false;
   String _radioValue;
   String choice;
-  Function nextOnPressed;
   StreamSubscription<BluetoothDiscoveryResult> deviceSearch;
 
   void radioButtonChanges(String value) {
     setState(() {
       _radioValue = value;
       print(value);
-      nextOnPressed = () {
-        deviceSearch.cancel();
-        stepController.nextStep(dataForNextStep: value);
-      };
     });
+  }
+
+  Function nextOnPressed() {
+    if (_radioValue != null) {
+      return () {
+        deviceSearch.cancel();
+        stepController.nextStep(dataForNextStep: _radioValue);
+      };
+    } else {
+      return null;
+    }
   }
 
   void task({var dataFromPreviousStep}) {
     if (run) {
       run = false;
-      nextOnPressed = null;
       _radioValue = null;
       nodeDevices = [];
 
+      scanRunning = true;
       deviceSearch = _bluetooth.startDiscovery().listen(
         (r) {
           scanRunning = true;
@@ -68,35 +74,62 @@ class AddNodeStep2 implements AddNodeStep {
         ),
       ),
     );
+
+    if (nodeDevices.length == 0 && !scanRunning) {
+      children.add(
+        Expanded(
+          child: Text('No FarmLab devices were found'),
+        ),
+      );
+    }
+
     if (nodeDevices.length != 0) {
-      if (nodeDevices.length == 0) {
-        children.add(Text('No FarmLab devices were found'));
-      } else {
-        List<Widget> devicesList = [];
-        for (BluetoothDevice device in nodeDevices) {
-          if (device.name != null) {
-            devicesList.add(
-              RadioListTile(
-                title: Text(device.name),
-                value: device.address.toString(),
-                groupValue: _radioValue,
-                onChanged: radioButtonChanges,
-              ),
-            );
-          }
-        }
-        children.add(
-          Expanded(
-            child: ListView(
-              children: devicesList,
+      List<Widget> devicesList = [];
+      for (BluetoothDevice device in nodeDevices) {
+        if (device.name != null) {
+          devicesList.add(
+            RadioListTile(
+              title: Text(device.name),
+              value: device.address.toString(),
+              groupValue: _radioValue,
+              onChanged: radioButtonChanges,
             ),
-          ),
-        );
+          );
+        }
       }
+      children.add(
+        Expanded(
+          flex: 4,
+          child: ListView(
+            children: devicesList,
+          ),
+        ),
+      );
+    } else {
+      children.add(
+        Expanded(
+          flex: 4,
+          child: SizedBox(),
+        ),
+      );
     }
 
     if (scanRunning) {
-      children.add(CircularProgressIndicator());
+      children.add(
+        Expanded(
+          flex: 1,
+          child: AspectRatio(
+            aspectRatio: 1 / 1,
+            child: CircularProgressIndicator(),
+          ),
+        ),
+      );
+      children.add(
+        Expanded(
+          flex: 4,
+          child: SizedBox(),
+        ),
+      );
     }
     children.add(
       Column(
@@ -133,7 +166,7 @@ class AddNodeStep2 implements AddNodeStep {
       ),
       StepButton(
         text: 'Next Step',
-        onPressed: nextOnPressed,
+        onPressed: nextOnPressed(),
       ),
     ];
   }

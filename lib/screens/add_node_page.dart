@@ -3,6 +3,7 @@ import 'package:farm_lab_mobile/components/step_button_bar.dart';
 import 'package:farm_lab_mobile/screens/add_node_page/add_node_step1.dart';
 import 'package:farm_lab_mobile/screens/add_node_page/add_node_step2.dart';
 import 'package:farm_lab_mobile/screens/add_node_page/add_node_step3.dart';
+import 'package:farm_lab_mobile/screens/add_node_page/add_node_step4.dart';
 import 'package:farm_lab_mobile/services/step_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
@@ -21,6 +22,7 @@ class _AddNodePageState extends State<AddNodePage>
   AddNodeStep1 addNodeStep1;
   AddNodeStep2 addNodeStep2;
   AddNodeStep3 addNodeStep3;
+  AddNodeStep4 addNodeStep4;
   StepController stepController;
   List<BluetoothDevice> bluetoothDevices = [];
 
@@ -32,7 +34,8 @@ class _AddNodePageState extends State<AddNodePage>
     addNodeStep1 = AddNodeStep1(_bluetooth, stepController, setState);
     addNodeStep2 = AddNodeStep2(_bluetooth, stepController, setState);
     addNodeStep3 = AddNodeStep3(_bluetooth, stepController, setState);
-    stepController..addStep(addNodeStep1)..addStep(addNodeStep2)..addStep(addNodeStep3);
+    addNodeStep4 = AddNodeStep4(_bluetooth, stepController, setState);
+    stepController..addStep(addNodeStep1)..addStep(addNodeStep2)..addStep(addNodeStep3)..addStep(addNodeStep4);
   }
 
   @override

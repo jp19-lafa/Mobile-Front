@@ -12,11 +12,18 @@ class AddNodeStep3 implements AddNodeStep {
   String address = "";
   bool connected;
   bool run = true;
-  Function nextOnPressed;
+
+  Function nextOnPressed() {
+    if (connected != null && connected) {
+      return () => stepController.nextStep(dataForNextStep: address);
+    } else {
+      return null;
+    }
+  }
 
   @override
   void task({var dataFromPreviousStep}) {
-    if(address != dataFromPreviousStep){
+    if (address != dataFromPreviousStep) {
       run = true;
       connected = null;
     }
@@ -71,24 +78,23 @@ class AddNodeStep3 implements AddNodeStep {
       list.add(CircularProgressIndicator());
     } else {
       if (connected) {
-        nextOnPressed = () => stepController.nextStep();
         list.add(Padding(
-        padding: const EdgeInsets.all(10.0),
-        child: Text(
-          'Succesfully connected!',
-          textAlign: TextAlign.center,
-          style: TextStyle(fontSize: 20),
-        ),
-      ));
+          padding: const EdgeInsets.all(10.0),
+          child: Text(
+            'Succesfully connected!',
+            textAlign: TextAlign.center,
+            style: TextStyle(fontSize: 20),
+          ),
+        ));
       } else {
         list.add(Padding(
-        padding: const EdgeInsets.all(10.0),
-        child: Text(
-          'Failed to connect',
-          textAlign: TextAlign.center,
-          style: TextStyle(fontSize: 20),
-        ),
-      ));
+          padding: const EdgeInsets.all(10.0),
+          child: Text(
+            'Failed to connect',
+            textAlign: TextAlign.center,
+            style: TextStyle(fontSize: 20),
+          ),
+        ));
         list.add(RaisedButton(
           child: Text('Retry'),
           onPressed: () {
@@ -115,7 +121,7 @@ class AddNodeStep3 implements AddNodeStep {
       ),
       StepButton(
         text: 'Next Step',
-        onPressed: nextOnPressed,
+        onPressed: nextOnPressed(),
       ),
     ];
   }
