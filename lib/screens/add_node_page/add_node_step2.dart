@@ -25,6 +25,10 @@ class AddNodeStep2 implements AddNodeStep {
     });
   }
 
+  void dispose(){
+    
+  }
+
   Function nextOnPressed() {
     if (_radioValue != null) {
       return () {
@@ -45,9 +49,8 @@ class AddNodeStep2 implements AddNodeStep {
       scanRunning = true;
       deviceSearch = _bluetooth.startDiscovery().listen(
         (r) {
-          scanRunning = true;
-          RegExp exp = RegExp(r"FARMLAB-[a-z0-9]{11}");
-          //RegExp exp = RegExp(r"LE-Bose QuietComfort \d{2} Se");
+          //RegExp exp = RegExp(r"FARMLAB-[a-z0-9]{11}");
+          RegExp exp = RegExp(r"LE-Bose QuietComfort \d{2} Se");
           if (r.device.name != null && exp.hasMatch(r.device.name)) {
             nodeDevices.add(r.device);
           }

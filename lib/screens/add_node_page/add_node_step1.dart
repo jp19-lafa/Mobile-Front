@@ -18,8 +18,15 @@ class AddNodeStep1 implements AddNodeStep {
   FlutterBluetoothSerial _bluetooth;
   StepController stepController;
   Function setState;
+  StreamSubscription<BluetoothState> bluetoothStateListener;
   bool _bluetoothOn = false;
   bool run = false;
+
+  void dispose() {
+    if (bluetoothStateListener != null) {
+      bluetoothStateListener.cancel();
+    }
+  }
 
   Function nextOnPressed() {
     if (_bluetoothOn) {
@@ -45,7 +52,8 @@ class AddNodeStep1 implements AddNodeStep {
       }
     });
 
-    _bluetooth.onStateChanged().listen((BluetoothState state) {
+    bluetoothStateListener =
+        _bluetooth.onStateChanged().listen((BluetoothState state) {
       setState(() {
         _bluetoothOn = state.isEnabled;
       });

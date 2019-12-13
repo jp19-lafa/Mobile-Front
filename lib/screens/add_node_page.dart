@@ -34,8 +34,17 @@ class _AddNodePageState extends State<AddNodePage>
     addNodeStep1 = AddNodeStep1(_bluetooth, stepController, setState);
     addNodeStep2 = AddNodeStep2(_bluetooth, stepController, setState);
     addNodeStep3 = AddNodeStep3(_bluetooth, stepController, setState);
-    addNodeStep4 = AddNodeStep4(_bluetooth, stepController, setState);
+    addNodeStep4 = AddNodeStep4(stepController, setState);
     stepController..addStep(addNodeStep1)..addStep(addNodeStep2)..addStep(addNodeStep3)..addStep(addNodeStep4);
+  }
+
+  @override
+  void dispose() {
+    addNodeStep1.dispose();
+    addNodeStep2.dispose();
+    addNodeStep3.dispose();
+    addNodeStep4.dispose();
+    super.dispose();
   }
 
   @override

@@ -13,6 +13,10 @@ class AddNodeStep3 implements AddNodeStep {
   bool connected;
   bool run = true;
 
+  void dispose(){
+    
+  }
+
   Function nextOnPressed() {
     if (connected != null && connected) {
       return () => stepController.nextStep(dataForNextStep: address);
