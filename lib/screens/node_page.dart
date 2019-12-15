@@ -1,5 +1,6 @@
 import 'package:farm_lab_mobile/components/custom_grid.dart';
 import 'package:farm_lab_mobile/components/floating_value_box.dart';
+import 'package:farm_lab_mobile/models/node_device.dart';
 import 'package:farm_lab_mobile/services/globals.dart' as global;
 import 'package:farm_lab_mobile/models/node.dart';
 import 'package:flutter/material.dart';
@@ -14,26 +15,72 @@ class NodePage extends StatefulWidget {
 }
 
 class _NodePageState extends State<NodePage> {
-  Node node;
+  Device airTemperature;
+  Device airHumidity;
+  Device waterTemperature;
+  Device waterPh;
+  Device lightSensor;
+  Device light;
+  Device flowPump;
+  Device foodPump;
+
+  void setValues(Node node) {
+    for (Device sensor in node.sensors) {
+      switch (sensor.type) {
+        case DeviceType.AirTemperature:
+          airTemperature = sensor;
+          break;
+        case DeviceType.AirHumidity:
+          airHumidity = sensor;
+          break;
+        case DeviceType.WaterTemperature:
+          waterTemperature = sensor;
+          break;
+        case DeviceType.WaterPh:
+          waterPh = sensor;
+          break;
+        case DeviceType.LightSensor:
+          lightSensor = sensor;
+          break;
+        default:
+          break;
+      }
+    }
+    for (Device actuator in node.actuators) {
+      switch (actuator.type) {
+        case DeviceType.Light:
+          light = actuator;
+          break;
+        case DeviceType.FlowPump:
+          flowPump = actuator;
+          break;
+        case DeviceType.FoodPump:
+          foodPump = actuator;
+          break;
+        default:
+          break;
+      }
+    }
+  }
 
   Future<void> reloadNode() async {
     Node nodeData = await global.nodeHelper.getNode(widget.node.id);
     setState(() {
-      node = nodeData;
+      setValues(nodeData);
     });
   }
 
   @override
   void initState() {
     super.initState();
-    node = widget.node;
+    setValues(widget.node);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(node.label),
+        title: Text(widget.node.label),
       ),
       body: Column(
         children: <Widget>[
@@ -47,41 +94,41 @@ class _NodePageState extends State<NodePage> {
                     children: <Widget>[
                       FloatingValueBox(
                         title: 'Air Temp',
-                        value: node.sensors.airtemp.value.toString(),
+                        value: airTemperature.value.toStringAsFixed(2),
                         suffix: '°C',
                       ),
                       FloatingValueBox(
                         title: 'Air Hum',
-                        value: node.sensors.airhumidity.value.toString(),
+                        value: airHumidity.value.toStringAsFixed(1),
                         suffix: '%',
                       ),
                       FloatingValueBox(
                         title: 'Water Temp',
-                        value: node.sensors.watertemp.value.toString(),
+                        value: waterTemperature.value.toStringAsFixed(2),
                         suffix: '°C',
                       ),
                       FloatingValueBox(
                         title: 'Water pH',
-                        value: node.sensors.waterph.value.toString(),
+                        value: waterPh.value.toStringAsFixed(1),
                       ),
                       FloatingValueBox(
                         title: 'Enviromental Light',
-                        value: node.sensors.lightstr.value.toString(),
+                        value: lightSensor.value.toStringAsFixed(0),
                         suffix: 'lm',
                       ),
                       FloatingValueBox(
                         title: 'Water Flow',
-                        value: node.actuators.flowpump.value.toString(),
+                        value: flowPump.value.toStringAsFixed(0),
                         suffix: '%',
                       ),
                       FloatingValueBox(
                         title: 'Food Flow',
-                        value: node.actuators.foodpump.value.toString(),
+                        value: foodPump.value.toStringAsFixed(1),
                         suffix: 'ml/d',
                       ),
                       FloatingValueBox(
                         title: 'Light',
-                        value: node.actuators.lightint.value.toString(),
+                        value: light.value.toStringAsFixed(0),
                         suffix: '%',
                       ),
                     ],
