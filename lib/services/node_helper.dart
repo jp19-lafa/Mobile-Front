@@ -1,12 +1,10 @@
 import 'package:farm_lab_mobile/models/node.dart';
-import 'package:farm_lab_mobile/services/networking.dart';
+import 'package:farm_lab_mobile/services/network_helper.dart';
 
 class NodeHelper {
-  String token;
   NetworkHelper _networkHelper;
-  NodeHelper(String token){
-    this.token = token;
-    this._networkHelper = NetworkHelper(this.token);
+  NodeHelper(NetworkHelper networkHelper){
+    this._networkHelper = networkHelper;
   }
 
   Future<dynamic> getNodes() async{
