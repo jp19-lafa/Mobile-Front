@@ -1,3 +1,9 @@
+import 'dart:convert';
+
+Device deviceFromJson(String str) => Device.fromJson(json.decode(str));
+
+String deviceToJson(Device data) => json.encode(data.toJson());
+
 class Device {
   double value;
   DeviceType type;
