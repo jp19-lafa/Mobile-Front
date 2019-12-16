@@ -1,14 +1,12 @@
 import 'package:farm_lab_mobile/models/device_history.dart';
 import 'package:farm_lab_mobile/models/device_patch.dart';
 import 'package:farm_lab_mobile/models/node_device.dart';
-import 'package:farm_lab_mobile/services/networking.dart';
+import 'package:farm_lab_mobile/services/network_helper.dart';
 
 class DeviceHelper {
-  String token;
   NetworkHelper _networkHelper;
-  DeviceHelper(String token) {
-    this.token = token;
-    this._networkHelper = NetworkHelper(this.token);
+  DeviceHelper(NetworkHelper networkHelper) {
+    this._networkHelper = networkHelper;
   }
 
   Future<dynamic> getDeviceHistory(Device device, {int limit = 5}) async {

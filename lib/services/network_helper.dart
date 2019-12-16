@@ -23,6 +23,25 @@ class NetworkHelper {
     }
   }
 
+  Future postRequest(String endPoint, String data) async {
+    String bearerToken = "bearer " + token;
+    http.Response response = await http.post(
+      url + endPoint,
+      headers: {
+        "Accept": "application/json",
+        "content-type": "application/json",
+        "Authorization": bearerToken
+      },
+      body: data,
+    );
+    if (response.statusCode.toString()[0] == "2") {
+      String data = response.body;
+      return data;
+    } else {
+      print(response.statusCode);
+    }
+  }
+
   Future patchRequest(String endPoint, String data) async {
     String bearerToken = "bearer " + token;
     http.Response response = await http.patch(
