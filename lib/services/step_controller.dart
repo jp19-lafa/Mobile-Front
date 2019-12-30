@@ -24,6 +24,7 @@ class StepController {
   }
 
   void previousStep() {
+    this.dataForNextStep = null;
     setState(() {
       activeStep--;
     });

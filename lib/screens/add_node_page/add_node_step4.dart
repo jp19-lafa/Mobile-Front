@@ -1,8 +1,11 @@
 import 'dart:async';
 
 import 'package:connectivity/connectivity.dart';
+import 'package:enum_to_string/enum_to_string.dart';
 import 'package:farm_lab_mobile/components/step_button.dart';
+import 'package:farm_lab_mobile/models/wifi_connection_data.dart';
 import 'package:farm_lab_mobile/screens/add_node_page/add_node_step.dart';
+import 'package:farm_lab_mobile/services/security_protocol.dart';
 import 'package:farm_lab_mobile/services/step_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:open_settings/open_settings.dart';
@@ -15,12 +18,13 @@ class AddNodeStep4 implements AddNodeStep {
   Function setState;
   bool run = true;
   bool runOnlyOnce = true;
+  bool runOnlyOnceOnReturn = true;
   ConnectivityResult connectionStatus;
   String address = '';
   String wifiSSID;
   String wifiName;
   String password = '';
-  String securityProtocol = 'WPA2';
+  SecurityProtocol securityProtocol = SecurityProtocol.WPA2;
   TextEditingController unsernameTextEditingController =
       TextEditingController();
   TextEditingController passwordTextEditingController = TextEditingController();
@@ -33,7 +37,17 @@ class AddNodeStep4 implements AddNodeStep {
 
   Function nextOnPressed() {
     if (password.length >= 8) {
-      return () => stepController.nextStep(dataForNextStep: [wifiSSID, unsernameTextEditingController.text, password]);
+      return () {
+        runOnlyOnceOnReturn = true;
+        stepController.nextStep(
+            dataForNextStep: WifiConnectionData(
+          address: address,
+          wifiName: wifiName,
+          securityProtocol: securityProtocol,
+          username: unsernameTextEditingController.text,
+          password: password,
+        ));
+      };
     } else {
       return null;
     }
@@ -41,11 +55,21 @@ class AddNodeStep4 implements AddNodeStep {
 
   @override
   void task({var dataFromPreviousStep}) {
-    if (address != dataFromPreviousStep) {
-      run = true;
+    if (dataFromPreviousStep != null) {
+      if (address != dataFromPreviousStep) {
+        address = dataFromPreviousStep;
+        run = true;
+      }
+    } else {
+      if (runOnlyOnceOnReturn) {
+        runOnlyOnceOnReturn = false;
+        setState(() {
+          passwordTextEditingController.text = '';
+        });
+      }
     }
-    address = dataFromPreviousStep;
     if (runOnlyOnce) {
+      runOnlyOnce = false;
       networkScan = connectivity.onConnectivityChanged.listen((result) {
         setState(() {
           run = true;
@@ -87,7 +111,7 @@ class AddNodeStep4 implements AddNodeStep {
       children.add(CircularProgressIndicator());
     } else if (connectionStatus == ConnectivityResult.wifi) {
       children.add(Text('Network: $wifiName'));
-      if (securityProtocol == "WPA2 Enterprise") {
+      if (securityProtocol == SecurityProtocol.WPA2_Enterprise) {
         children.add(
           TextField(
             controller: unsernameTextEditingController,
@@ -117,16 +141,17 @@ class AddNodeStep4 implements AddNodeStep {
       );
       children.add(
         DropdownButton<String>(
-          value: securityProtocol,
-          items: <String>['WPA2', 'WPA2 Enterprise'].map((String value) {
+          value: securityProtocol.getString(),
+          items: SecurityProtocol.values.map((SecurityProtocol value) {
             return DropdownMenuItem<String>(
-              value: value,
-              child: Text(value),
+              value: value.getString(),
+              child: Text(value.getParsedString()),
             );
           }).toList(),
           onChanged: (value) {
             setState(() {
-              securityProtocol = value;
+              securityProtocol =
+                  EnumToString.fromString(SecurityProtocol.values, value);
             });
           },
         ),
@@ -151,7 +176,10 @@ class AddNodeStep4 implements AddNodeStep {
     return [
       StepButton(
         text: 'Previous Step',
-        onPressed: () => stepController.previousStep(),
+        onPressed: () {
+          stepController.previousStep();
+          stepController.previousStep();
+        },
         green: false,
       ),
       StepButton(

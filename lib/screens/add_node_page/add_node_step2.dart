@@ -21,13 +21,10 @@ class AddNodeStep2 implements AddNodeStep {
   void radioButtonChanges(String value) {
     setState(() {
       _radioValue = value;
-      print(value);
     });
   }
 
-  void dispose(){
-    
-  }
+  void dispose() {}
 
   Function nextOnPressed() {
     if (_radioValue != null) {
@@ -49,8 +46,8 @@ class AddNodeStep2 implements AddNodeStep {
       scanRunning = true;
       deviceSearch = _bluetooth.startDiscovery().listen(
         (r) {
-          //RegExp exp = RegExp(r"FARMLAB-[a-z0-9]{11}");
-          RegExp exp = RegExp(r"LE-Bose QuietComfort \d{2} Se");
+          RegExp exp = RegExp(r"FARMLAB-[a-z0-9]{11}");
+          //RegExp exp = RegExp(r"LE-Bose QuietComfort \d{2} Se");
           if (r.device.name != null && exp.hasMatch(r.device.name)) {
             nodeDevices.add(r.device);
           }

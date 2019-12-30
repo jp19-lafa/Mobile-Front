@@ -32,16 +32,15 @@ class AddNodeStep3 implements AddNodeStep {
       connected = null;
     }
     address = dataFromPreviousStep;
-    print(address);
     if (run) {
       run = false;
       _bluetooth.getBondedDevices().then(
         (bondedDevices) {
           for (BluetoothDevice x in bondedDevices) {
             if (x.address == address) {
-              print('already connected');
               setState(() {
                 connected = true;
+                nextOnPressed();
               });
             }
           }
@@ -49,12 +48,11 @@ class AddNodeStep3 implements AddNodeStep {
             _bluetooth.bondDeviceAtAddress(address).then((_) {
               for (BluetoothDevice x in bondedDevices) {
                 if (x.address == address) {
-                  print('connected');
                   setState(() {
                     connected = true;
+                    nextOnPressed();
                   });
                 } else {
-                  print('not connected');
                   setState(() {
                     connected = false;
                   });
@@ -79,7 +77,10 @@ class AddNodeStep3 implements AddNodeStep {
           style: TextStyle(fontSize: 20),
         ),
       ));
-      list.add(CircularProgressIndicator());
+      list.add(Padding(
+        padding: const EdgeInsets.all(10.0),
+        child: CircularProgressIndicator(),
+      ));
     } else {
       if (connected) {
         list.add(Padding(
