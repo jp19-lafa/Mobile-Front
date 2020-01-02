@@ -1,4 +1,4 @@
-import 'package:farm_lab_mobile/screens/node_summary_page.dart';
+import 'package:farm_lab_mobile/screens/login_page.dart';
 import 'package:flutter/material.dart';
 
 void main() => runApp(MyApp());
@@ -11,7 +11,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primaryColor: Color(0xFF4CAF50),
       ),
-      home: NodeSummaryPage(),
+      home: LoginPage(),
     );
   }
 }
