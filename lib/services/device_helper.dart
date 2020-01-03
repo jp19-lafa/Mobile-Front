@@ -22,7 +22,7 @@ class DeviceHelper {
     endpoint += "?limit=$limit";
 
     String returnData = await _networkHelper.getRequest(endpoint + device.id);
-    if (returnData is DeviceHistory) {
+    if (returnData is String) {
       DeviceHistory deviceData = deviceHistoryFromJson(returnData);
       return deviceData;
     } else {
@@ -40,7 +40,7 @@ class DeviceHelper {
         "/actuators/" + device.id,
         data,
       );
-      if (returnData is DevicePatch) {
+      if (returnData is String) {
         DevicePatch deviceData = devicePatchFromJson(returnData);
         return deviceData;
       }

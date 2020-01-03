@@ -1,46 +1,73 @@
 import 'dart:convert';
 
+import 'package:shared_preferences/shared_preferences.dart';
+
 Login loginFromJson(String str) => Login.fromJson(json.decode(str));
 
 String loginToJson(Login data) => json.encode(data.toJson());
 
 class Login {
-    String email;
-    String password;
+  String email;
+  String password;
 
-    Login({
-        this.email,
-        this.password,
-    });
+  Login({
+    this.email,
+    this.password,
+  });
 
-    factory Login.fromJson(Map<String, dynamic> json) => Login(
+  factory Login.fromJson(Map<String, dynamic> json) => Login(
         email: json["email"],
         password: json["password"],
-    );
+      );
 
-    Map<String, dynamic> toJson() => {
+  Map<String, dynamic> toJson() => {
         "email": email,
         "password": password,
-    };
+      };
 }
 
 
-Refrech refrechFromJson(String str) => Refrech.fromJson(json.decode(str));
+Refresh refreshFromJson(String str) => Refresh.fromJson(json.decode(str));
 
-String refrechToJson(Refrech data) => json.encode(data.toJson());
+String refreshToJson(Refresh data) => json.encode(data.toJson());
 
-class Refrech {
-    String refresh;
+class Refresh {
+  String refresh;
 
-    Refrech({
-        this.refresh,
-    });
+  Refresh({
+    this.refresh,
+  });
 
-    factory Refrech.fromJson(Map<String, dynamic> json) => Refrech(
+  factory Refresh.fromJson(Map<String, dynamic> json) => Refresh(
         refresh: json["refresh"],
-    );
+      );
 
-    Map<String, dynamic> toJson() => {
+  Map<String, dynamic> toJson() => {
         "refresh": refresh,
-    };
+      };
+}
+
+
+Token tokenFromJson(String str) => Token.fromJson(json.decode(str));
+
+String tokenToJson(Token data) => json.encode(data.toJson());
+
+class Token {
+  String jwt;
+  String refresh;
+
+  Token({
+    this.jwt,
+    this.refresh,
+  });
+
+  factory Token.fromJson(Map<String, dynamic> json) => Token(
+        jwt: json["jwt"],
+        refresh: json["refresh"],
+      );
+
+  Map<String, dynamic> toJson() => {
+        "jwt": jwt,
+        "refresh": refresh,
+      };
 }

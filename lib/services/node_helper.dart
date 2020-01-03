@@ -8,14 +8,22 @@ class NodeHelper {
   }
 
   Future<dynamic> getNodes() async{
-    String nodeJson = await _networkHelper.getRequest("/nodes");
-    List<Node> nodeData = nodesFromJson(nodeJson);
-    return nodeData;
+    String returnData = await _networkHelper.getRequest("/nodes");
+    if (returnData is String) {
+      List<Node> nodeData = nodesFromJson(returnData);
+      return nodeData;
+    } else {
+      return returnData;
+    }
   }
 
   Future<dynamic> getNode(String id) async{
-    String nodeJson = await _networkHelper.getRequest("/nodes/" + id);
-    Node nodeData = nodeFromJson(nodeJson);
-    return nodeData;
+    String returnData = await _networkHelper.getRequest("/nodes/" + id);
+    if (returnData is String) {
+      Node nodeData = nodeFromJson(returnData);
+      return nodeData;
+    } else {
+      return returnData;
+    }
   }
 }
