@@ -11,7 +11,8 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
-  TextEditingController firstnameTextEditingController = TextEditingController();
+  TextEditingController firstnameTextEditingController =
+      TextEditingController();
   TextEditingController lastnameTextEditingController = TextEditingController();
   TextEditingController emailTextEditingController = TextEditingController();
   TextEditingController passwordTextEditingController = TextEditingController();
@@ -32,26 +33,24 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
     }
   }
 
-  void login() {
+  bool isValidPassword(String password) {
+    if (RegExp(r"(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}").hasMatch(password)) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  void loginAction() {
     if (emailTextEditingController.text != null &&
         passwordTextEditingController != null) {
       if (isValidEmailAdress(emailTextEditingController.text)) {
-        Login login = Login(
+        UserDetails loginDetails = UserDetails(
             email: emailTextEditingController.text,
             password: passwordTextEditingController.text);
-        authenticationHelper.login(login).then(
+        authenticationHelper.login(loginDetails).then(
           (data) {
-            if (data is Token) {
-              Token token = data;
-              global.token = token.jwt;
-              global.refreshToken = token.refresh;
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => NodeSummaryPage(),
-                ),
-              );
-            }
+            login(data);
           },
         );
       } else {
@@ -62,7 +61,47 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
     }
   }
 
-  void register() {}
+  void registerAction() {
+    if (firstnameTextEditingController.text != null &&
+        lastnameTextEditingController != null &&
+        emailTextEditingController.text != null &&
+        passwordTextEditingController != null) {
+      if (isValidEmailAdress(emailTextEditingController.text)) {
+        if (isValidPassword(passwordTextEditingController.text)) {
+          UserDetails registerDetails = UserDetails(
+              firstname: firstnameTextEditingController.text,
+              lastname: lastnameTextEditingController.text,
+              email: emailTextEditingController.text,
+              password: passwordTextEditingController.text);
+          authenticationHelper.register(registerDetails).then(
+            (data) {
+              login(data);
+            },
+          );
+        } else {
+          print('Invallid password');
+        }
+      } else {
+        print('Invalid email adress');
+      }
+    } else {
+      print('One or more fields not filled in');
+    }
+  }
+
+  void login(var data) {
+    if (data is Token) {
+      Token token = data;
+      global.token = token.jwt;
+      global.refreshToken = token.refresh;
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => NodeSummaryPage(),
+        ),
+      );
+    }
+  }
 
   @override
   void initState() {
@@ -176,7 +215,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                           RaisedButton(
                             child: Text('Login'),
                             onPressed: () {
-                              login();
+                              loginAction();
                             },
                           ),
                         ],
@@ -233,7 +272,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                           RaisedButton(
                             child: Text('Register'),
                             onPressed: () {
-                              register();
+                              registerAction();
                             },
                           ),
                         ],

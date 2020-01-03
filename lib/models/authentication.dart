@@ -2,28 +2,36 @@ import 'dart:convert';
 
 import 'package:shared_preferences/shared_preferences.dart';
 
-Login loginFromJson(String str) => Login.fromJson(json.decode(str));
+UserDetails userDetailsFromJson(String str) => UserDetails.fromJson(json.decode(str));
 
-String loginToJson(Login data) => json.encode(data.toJson());
+String userDetailsToJson(UserDetails data) => json.encode(data.toJson());
 
-class Login {
-  String email;
-  String password;
+class UserDetails {
+    String firstname;
+    String lastname;
+    String email;
+    String password;
 
-  Login({
-    this.email,
-    this.password,
-  });
+    UserDetails({
+        this.firstname,
+        this.lastname,
+        this.email,
+        this.password,
+    });
 
-  factory Login.fromJson(Map<String, dynamic> json) => Login(
+    factory UserDetails.fromJson(Map<String, dynamic> json) => UserDetails(
+        firstname: json["firstname"] == null ? null : json["firstname"],
+        lastname: json["lastname"] == null ? null : json["lastname"],
         email: json["email"],
         password: json["password"],
-      );
+    );
 
-  Map<String, dynamic> toJson() => {
+    Map<String, dynamic> toJson() => {
+        "firstname": firstname == null ? null : firstname,
+        "lastname": lastname == null ? null : lastname,
         "email": email,
         "password": password,
-      };
+    };
 }
 
 
@@ -60,6 +68,18 @@ class Token {
     this.jwt,
     this.refresh,
   });
+
+  Future<void> store() async {
+    final prefs = await SharedPreferences.getInstance();
+    prefs.setString('token', jwt);
+    prefs.setString('refresh', refresh);
+  }
+
+  Future<void> load() async {
+    final prefs = await SharedPreferences.getInstance();
+    jwt = prefs.getString('token');
+    refresh = prefs.getString('refresh');
+  }
 
   factory Token.fromJson(Map<String, dynamic> json) => Token(
         jwt: json["jwt"],
