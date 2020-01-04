@@ -24,10 +24,13 @@ class AddNodeStep5 implements AddNodeStep {
 
   void dispose() {
     if (responseListener != null) {
-      responseListener.cancel();
+      responseListener.cancel().then((_) {
+        responseListener = null;
+      });
     }
     if (connection != null) {
       connection.dispose();
+      connection = null;
     }
   }
 
@@ -44,7 +47,7 @@ class AddNodeStep5 implements AddNodeStep {
     connection.output.add(utf8.encode('TYPE:$securityProtocolString\r\n'));
     await connection.output.allSent;
     connection.output
-        .add(utf8.encode('SSID:${wifiConnectionData.address}\r\n'));
+        .add(utf8.encode('SSID:${wifiConnectionData.wifiName}\r\n'));
     await connection.output.allSent;
     connection.output
         .add(utf8.encode('PWD:${wifiConnectionData.password}\r\n'));
@@ -77,18 +80,17 @@ class AddNodeStep5 implements AddNodeStep {
           break;
       }
 
-      if (connection != null) {
+      if (connection == null) {
         BluetoothConnection.toAddress(wifiConnectionData.address)
             .then((_connection) {
           connection = _connection;
-        }).catchError((error) {
-          print(error);
-        });
-      }
-      if (responseListener != null && connection != null) {
-        responseListener = connection.input.listen((data) {
-          print(utf8.decode(data));
-          dataResponse = utf8.decode(data);
+          responseListener = connection.input.listen((data) {
+            print(utf8.decode(data));
+            setState(() {
+              dataResponse = utf8.decode(data);
+            });
+          });
+          sendData();
         });
       }
     }
