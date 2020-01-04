@@ -8,8 +8,9 @@ class AuthenticationHelper {
   }
 
   Future<dynamic> login(UserDetails loginDetails) async {
-    String loginJson = userDetailsToJson(loginDetails);
-    String returnData = await _networkHelper.postRequest("/auth/login", loginJson);
+    String loginJson = userDetailsToLoginJson(loginDetails);
+    dynamic returnData =
+        await _networkHelper.postRequest("/auth/login", loginJson);
     if (returnData is String) {
       Token tokenData = tokenFromJson(returnData);
       return tokenData;
@@ -19,19 +20,9 @@ class AuthenticationHelper {
   }
 
   Future<dynamic> register(UserDetails registerDetails) async {
-    String registerJson = userDetailsToJson(registerDetails);
-    String returnData = await _networkHelper.postRequest("/auth/register", registerJson);
-    if (returnData is String) {
-      Token tokenData = tokenFromJson(returnData);
-      return tokenData;
-    } else {
-      return returnData;
-    }
-  }
-
-  Future<dynamic> refresh(Refresh refrech) async {
-    String refrechJson = refreshToJson(refrech);
-    String returnData = await _networkHelper.postRequest("/auth/refrech", refrechJson);
+    String registerJson = userDetailsToRegisterJson(registerDetails);
+    dynamic returnData =
+        await _networkHelper.postRequest("/auth/register", registerJson);
     if (returnData is String) {
       Token tokenData = tokenFromJson(returnData);
       return tokenData;

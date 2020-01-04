@@ -23,6 +23,14 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
       AuthenticationHelper(global.networkHelper);
   bool loginTabActive = true;
 
+  void checkForToken() async {
+    Token token = Token();
+    await token.load();
+    if (token.jwt != '') {
+      login(token);
+    }
+  }
+
   bool isValidEmailAdress(String address) {
     if (RegExp(
             r"^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,253}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,253}[a-zA-Z0-9])?)*$")
@@ -41,18 +49,15 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
     }
   }
 
-  void loginAction() {
+  void loginAction() async {
     if (emailTextEditingController.text != null &&
         passwordTextEditingController != null) {
       if (isValidEmailAdress(emailTextEditingController.text)) {
         UserDetails loginDetails = UserDetails(
             email: emailTextEditingController.text,
             password: passwordTextEditingController.text);
-        authenticationHelper.login(loginDetails).then(
-          (data) {
-            login(data);
-          },
-        );
+        dynamic data = await authenticationHelper.login(loginDetails);
+        login(data);
       } else {
         print('Invalid email adress');
       }
@@ -61,7 +66,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
     }
   }
 
-  void registerAction() {
+  void registerAction() async {
     if (firstnameTextEditingController.text != null &&
         lastnameTextEditingController != null &&
         emailTextEditingController.text != null &&
@@ -73,11 +78,8 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
               lastname: lastnameTextEditingController.text,
               email: emailTextEditingController.text,
               password: passwordTextEditingController.text);
-          authenticationHelper.register(registerDetails).then(
-            (data) {
-              login(data);
-            },
-          );
+          dynamic data = await authenticationHelper.register(registerDetails);
+          login(data);
         } else {
           print('Invallid password');
         }
@@ -89,23 +91,25 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
     }
   }
 
-  void login(var data) {
+  void login(var data) async{
     if (data is Token) {
       Token token = data;
-      global.token = token.jwt;
-      global.refreshToken = token.refresh;
+      await token.store();
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
           builder: (context) => NodeSummaryPage(),
         ),
       );
+    } else {
+      print(data);
     }
   }
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) => checkForToken());
     tabController = TabController(vsync: this, length: 2);
   }
 

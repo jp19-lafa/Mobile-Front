@@ -28,6 +28,7 @@ dependencies:
   open_settings: ^1.0.2
   connectivity: ^0.4.6
   enum_to_string: ^1.0.8
+  shared_preferences: ^0.5.6
 
 dev_dependencies:
   flutter_test:

@@ -1,5 +1,7 @@
+import 'package:farm_lab_mobile/models/authentication.dart';
 import 'package:farm_lab_mobile/models/node.dart';
 import 'package:farm_lab_mobile/screens/add_node_page.dart';
+import 'package:farm_lab_mobile/screens/login_page.dart';
 import 'package:farm_lab_mobile/screens/node_page.dart';
 import 'package:farm_lab_mobile/services/globals.dart' as global;
 import 'package:flutter/material.dart';
@@ -14,29 +16,37 @@ class _NodeSummaryPageState extends State<NodeSummaryPage> {
   List<Widget> nodeList = [Text('LOADING...')];
 
   Future<void> buildNode() async {
-    List<Node> nodesData = await global.nodeHelper.getNodes();
-    nodeList.clear();
-    setState(() {
-      for (Node nodeData in nodesData) {
-        nodeList.add(
-          NodeSummary(
-            name: nodeData.label,
-            status: nodeData.status,
-            onPressed: () async {
-              Node node = await global.nodeHelper.getNode(nodeData.id);
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => NodePage(
-                    node: node,
-                  ),
-                ),
-              );
-            },
-          ),
-        );
-      }
-    });
+    await global.networkHelper.isLoaded();
+    dynamic nodesData = await global.nodeHelper.getNodes();
+    if (nodesData is List<Node>) {
+      nodeList.clear();
+      setState(
+        () {
+          for (Node nodeData in nodesData) {
+            nodeList.add(
+              NodeSummary(
+                name: nodeData.label,
+                status: nodeData.status,
+                onPressed: () async {
+                  Node node = await global.nodeHelper.getNode(nodeData.id);
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => NodePage(
+                        node: node,
+                      ),
+                    ),
+                  );
+                },
+              ),
+            );
+          }
+        },
+      );
+    }
+    else{
+      print(nodesData);
+    }
   }
 
   @override
@@ -50,6 +60,28 @@ class _NodeSummaryPageState extends State<NodeSummaryPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Dashboard'),
+        actions: <Widget>[
+          PopupMenuButton<PopupOptions>(
+            onSelected: (PopupOptions result) {
+              switch (result) {
+                case PopupOptions.logout:
+                  Token token = Token();
+                  token.clear();
+                  Navigator.pushReplacement(context,
+                      MaterialPageRoute(builder: (context) => LoginPage()));
+                  break;
+                default:
+              }
+            },
+            itemBuilder: (BuildContext context) =>
+                <PopupMenuEntry<PopupOptions>>[
+              const PopupMenuItem<PopupOptions>(
+                value: PopupOptions.logout,
+                child: Text('Logout'),
+              ),
+            ],
+          )
+        ],
       ),
       body: RefreshIndicator(
         onRefresh: buildNode,
@@ -146,4 +178,8 @@ class NodeSummary extends StatelessWidget {
       ),
     );
   }
+}
+
+enum PopupOptions {
+  logout,
 }

@@ -21,7 +21,7 @@ class DeviceHelper {
     endpoint += device.id;
     endpoint += "?limit=$limit";
 
-    String returnData = await _networkHelper.getRequest(endpoint + device.id);
+    dynamic returnData = await _networkHelper.getRequest(endpoint + device.id);
     if (returnData is String) {
       DeviceHistory deviceData = deviceHistoryFromJson(returnData);
       return deviceData;
@@ -36,15 +36,14 @@ class DeviceHelper {
         device.type == DeviceType.FoodPump) {
       String data =
           deviceToJson(Device(value: double.parse(value.toStringAsFixed(0))));
-      String returnData = await _networkHelper.patchRequest(
+      dynamic returnData = await _networkHelper.patchRequest(
         "/actuators/" + device.id,
         data,
       );
       if (returnData is String) {
         DevicePatch deviceData = devicePatchFromJson(returnData);
         return deviceData;
-      }
-      else{
+      } else {
         return returnData;
       }
     } else {
