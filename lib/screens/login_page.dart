@@ -1,3 +1,4 @@
+import 'package:farm_lab_mobile/components/gradient_button.dart';
 import 'package:farm_lab_mobile/components/tab_item.dart';
 import 'package:farm_lab_mobile/models/authentication.dart';
 import 'package:farm_lab_mobile/screens/node_summary_page.dart';
@@ -91,7 +92,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
     }
   }
 
-  void login(var data) async{
+  void login(var data) async {
     if (data is Token) {
       Token token = data;
       await token.store();
@@ -131,17 +132,6 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                           child: Image.asset(
                             'assets/logo.png',
                             width: 200,
-                          ),
-                        ),
-                      ),
-                      Center(
-                        child: Padding(
-                          padding: const EdgeInsets.only(top: 40),
-                          child: Text(
-                            'FarmLab',
-                            style: TextStyle(
-                              fontSize: 40,
-                            ),
                           ),
                         ),
                       ),
@@ -187,7 +177,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                   decoration: BoxDecoration(
                     border: Border.all(
                       width: 3,
-                      color: Colors.green,
+                      color: Colors.grey[300],
                     ),
                     borderRadius: BorderRadius.circular(20),
                   ),
@@ -216,8 +206,12 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                           SizedBox(
                             height: 15,
                           ),
-                          RaisedButton(
-                            child: Text('Login'),
+                          GradientButton(
+                            'Login',
+                            gradientColors: <Color>[
+                              Color(0xff4caf50),
+                              Color(0xff388e3c)
+                            ],
                             onPressed: () {
                               loginAction();
                             },
@@ -273,8 +267,12 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                           SizedBox(
                             height: 15,
                           ),
-                          RaisedButton(
-                            child: Text('Register'),
+                          GradientButton(
+                            'Register',
+                            gradientColors: <Color>[
+                              Color(0xff4caf50),
+                              Color(0xff388e3c)
+                            ],
                             onPressed: () {
                               registerAction();
                             },
